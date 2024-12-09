@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Generated News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <div class="text-center mb-6">
+            <h1 class="text-4xl font-bold text-blue-600">AI-Generated News</h1>
+            <p class="text-xl text-gray-600">Get the latest updates on your favorite topics powered by AI!</p>
+        </div>
+
+        <!-- User Input Form -->
+        <div class="max-w-md mx-auto">
+            <div class="mb-4">
+                <label for="user-input" class="block text-lg font-semibold text-gray-700">Enter Your Query</label>
+                <input type="text" id="user-input" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="e.g., What's the latest on technology?">
+            </div>
+            <button id="fetch-news" class="w-full py-3 bg-blue-600 text-white rounded-lg">Get News</button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="news-results" class="mt-8 hidden">
+            <h2 class="text-2xl font-semibold text-gray-700">Generated Articles</h2>
+            <div id="articles-list" class="mt-4 space-y-4">
+                <!-- News articles will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" class="hidden text-center mt-8">
+            <span class="text-lg text-gray-600">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Handle click on 'Get News' button
+            $('#fetch-news').click(function() {
+                const userInput = $('#user-input').val().trim();
+
+                if (!userInput) {
+                    alert('Please enter a query.');
+                    return;
+                }
+
+                // Show loading spinner
+                $('#loading-spinner').removeClass('hidden');
+                $('#news-results').addClass('hidden');
+
+                // Send request to Flask API
+                $.ajax({
+                    url: 'http://127.0.0.1:5000/generate-news',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ "user_input": userInput }),
+                    success: function(response) {
+                        $('#loading-spinner').addClass('hidden');
+                        $('#news-results').removeClass('hidden');
+
+                        // Clear previous articles
+                        $('#articles-list').empty();
+
+                        if (response.error) {
+                            $('#articles-list').append(`<p class="text-red-500">${response.error}</p>`);
+                        } else {
+                            const category = response.category;
+                            const articles = response.articles;
+
+                            // Display the category and articles
+                            $('#articles-list').append(`<h3 class="text-lg font-semibold text-gray-800">Category: ${category}</h3>`);
+                            articles.forEach(function(article) {
+                                $('#articles-list').append(`<div class="bg-white p-4 rounded-lg shadow-md">
+                                    <p>${article}</p>
+                                </div>`);
+                            });
+                        }
+                    },
+                    error: function() {
+                        $('#loading-spinner').addClass('hidden');
+                        alert('Error fetching news. Please try again later.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
