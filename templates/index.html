@@ -74,7 +74,7 @@
                             // Display the category and articles
                             $('#articles-list').append(`<h3 class="text-lg font-semibold text-gray-800">Category: ${category}</h3>`);
                             articles.forEach(function(article) {
-                                $('#articles-list').append(`<div class="bg-white p-4 rounded-lg shadow-md">
+                                $('#articles-list').html(`<div class="bg-white p-4 rounded-lg shadow-md">
                                     <p>${article}</p>
                                 </div>`);
                             });

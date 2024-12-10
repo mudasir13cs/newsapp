@@ -1,0 +1,41 @@
+{
+    "Technology": [
+        "https://www.theverge.com/rss/index.xml",
+        "https://www.wired.com/feed/rss"
+    ],
+    "Sports": [
+        "https://www.geo.tv/rss/1/4",
+        "https://www.espn.com/espn/rss/news"
+    ],
+    "Lifestyle":[
+        "https://lifehacker.com/feed/rss"
+    ],
+    "Korean News":[
+        "https://www.koreatimes.co.kr/www/rss/rss.xml"
+    ],
+    "Finance":[
+        "https://www.geo.tv/rss/1/55",
+        "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+        "https://www.coindesk.com/arc/outboundfeeds/rss"
+    ],
+    "News": [
+        "https://www.geo.tv/rss/1/2",
+        "https://feeds.bbci.co.uk/news/rss.xml",
+        "http://rss.cnn.com/rss/edition.rss"
+    ],
+    "Automotive":[
+        "https://www.caranddriver.com/rss/all.xml/"
+    ],
+    "Pakistan News": [
+        "https://www.dawn.com/rss",
+        "https://www.geo.tv/rss/1/1"
+    ],
+    "Weather": [
+        "http://www.kma.go.kr/weather/forecast/mid-term-rss3.jsp?stnId=131",
+        "https://www.geo.tv/rss"
+    ],
+    "Gaming": [
+        "https://kotaku.com/rss",
+        "https://www.polygon.com/rss/index.xml"
+    ]
+}
