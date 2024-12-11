@@ -73,7 +73,7 @@ def generate_news():
         else:
             return jsonify({"message": "No articles found.", "isSuccess": False}), 200
     else:
-        return jsonify({"message": "Content not found for the given category.", "isSuccess": False}), 200
+        return jsonify({"message": "Content not found for the given context.", "isSuccess": False}), 200
 
 @app.route('/article-detail', methods=['POST'])
 def article_detail():
@@ -83,7 +83,7 @@ def article_detail():
         return jsonify({"message": "Article link is required.", "isSuccess": False}), 200
     article_content = fetch_article(article_link)
     if article_content:
-        return jsonify({data:{"article": article_content},  "message": "Success.", "isSuccess": True}), 200
+        return jsonify({"data":{"article": article_content},  "message": "Success.", "isSuccess": True}), 200
     else:
         return jsonify({"message": "Unable to fetch article content.", "isSuccess": False}), 200
 
