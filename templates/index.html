@@ -54,10 +54,10 @@
 
                 // Send request to Flask API
                 $.ajax({
-                    url: 'http://127.0.0.1:5000/generate-news',
+                    url: 'https://0131-192-245-249-232.ngrok-free.app/generate-news',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ "user_input": userInput }),
+                    data: JSON.stringify({ "user_input": userInput, "description": false }),
                     success: function(response) {
                         $('#loading-spinner').addClass('hidden');
                         $('#news-results').removeClass('hidden');
@@ -68,16 +68,23 @@
                         if (response.error) {
                             $('#articles-list').append(`<p class="text-red-500">${response.error}</p>`);
                         } else {
-                            const category = response.category;
-                            const articles = response.articles;
+                            if(response.isSuccess == true){
+                                const category = response.data.category;
+                                const articles = response.data.articles;
+    
+                                // Display the category and articles
+                                $('#articles-list').append(`<h3 class="text-lg font-semibold text-gray-800">Category: ${category}</h3>`);
+                                articles.forEach(function(article) {
 
-                            // Display the category and articles
-                            $('#articles-list').append(`<h3 class="text-lg font-semibold text-gray-800">Category: ${category}</h3>`);
-                            articles.forEach(function(article) {
-                                $('#articles-list').html(`<div class="bg-white p-4 rounded-lg shadow-md">
-                                    <p>${article}</p>
-                                </div>`);
-                            });
+                                    console.log(article)
+                                    $('#articles-list').html(`<div class="bg-white p-4 rounded-lg shadow-md">
+                                        <h2>${article.title}</h2>
+                                        <p>${article.description}</p>
+                                    </div>`);
+                                });
+                            }else{
+                                alert('Error fetching news. Something went wrong.'); 
+                            }
                         }
                     },
                     error: function() {

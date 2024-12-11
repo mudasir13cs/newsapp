@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime
 import nltk
-
+import re
 
 
 cache_dir = os.getenv("CACHE_DIR", "/home/user/.cache/huggingface/hub") 
@@ -152,3 +152,13 @@ def detect_feed_type(feed_url):
         return "RSS 0.9"
     else:
         return "Unknown or unsupported feed type"    
+    
+    
+def extract_image_from_description(description):
+    if description:
+        # Regex to find image URLs in the description
+        image_url_pattern = r'(https?://[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif))'
+        match = re.search(image_url_pattern, description)
+        if match:
+            return match.group(1)
+    return None

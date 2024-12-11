@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import torch
 import json
 from dotenv import load_dotenv
-from helper import fetch_article, determine_category, get_feed_url, detect_feed_type, fetch_rss_feed, format_published_date
+from helper import fetch_article, determine_category, get_feed_url, detect_feed_type, fetch_rss_feed, extract_image_from_description, format_published_date
 
 
 load_dotenv()
@@ -15,6 +15,10 @@ rss_categories = get_feed_url(file_path)
 @app.route('/generate-news', methods=['POST'])
 def generate_news():
     user_input = request.json.get('user_input')
+    
+    isDescription = request.json.get('description') if hasattr(request.json, "description") else True
+    
+    
 
     category = determine_category(user_input, rss_categories)
     print(category)
@@ -30,20 +34,27 @@ def generate_news():
             
             feed_entries = fetch_rss_feed(url)
             for entry in feed_entries[:]:
+                description = None
                 article = {
                     "title": entry.title,
                     "link": entry.link,
                 }
 
                 if feed_type == "Atom 1.0":
+                    if isDescription :
+                        description = entry.summary if hasattr(entry, "summary") else None
+                    
                     article.update({
-                        "image": entry.media_image if hasattr(entry, "media_image") else None,
-                        "description": entry.summary if hasattr(entry, "summary") else None,
+                        "image": entry.media_image if hasattr(entry, "media_image") else extract_image_from_description(entry.summary if hasattr(entry, "summary") else None),
+                        "description": description,
                         "published": format_published_date(entry.published_parsed) if hasattr(entry, "published_parsed") else "",
                     })
                 elif feed_type in ["RSS 2.0", "RSS 1.0", "RSS 0.9"]:
+                    if isDescription :
+                        description = entry.summary if hasattr(entry, "summary") else None
+                        
                     article.update({
-                        "image": entry.media_image if hasattr(entry, "media_image") else None,
+                        "image": entry.media_image if hasattr(entry, "media_image") else extract_image_from_description(entry.summary if hasattr(entry, "summary") else None),
                         "description": entry.description if hasattr(entry, "description") else None,
                         "published": format_published_date(entry.published_parsed) if hasattr(entry, "published_parsed") else "",
                     })
@@ -58,23 +69,23 @@ def generate_news():
 
         if generated_articles:
             print(generated_articles)
-            return jsonify({"category": category, "articles": generated_articles}), 200
+            return jsonify({"data":{"category": category, "articles": generated_articles}, "message": "Success.",  "isSuccess": True}), 200
         else:
-            return jsonify({"error": "No articles found."}), 404
+            return jsonify({"message": "No articles found.", "isSuccess": False}), 200
     else:
-        return jsonify({"error": "Content not found for the given category."}), 404
+        return jsonify({"message": "Content not found for the given category.", "isSuccess": False}), 200
 
 @app.route('/article-detail', methods=['POST'])
 def article_detail():
     article_link = request.json.get('article_link')
 
     if not article_link:
-        return jsonify({"error": "Article link is required."}), 400
+        return jsonify({"message": "Article link is required.", "isSuccess": False}), 200
     article_content = fetch_article(article_link)
     if article_content:
-        return jsonify({"article": article_content}), 200
+        return jsonify({data:{"article": article_content},  "message": "Success.", "isSuccess": True}), 200
     else:
-        return jsonify({"error": "Unable to fetch article content."}), 404
+        return jsonify({"message": "Unable to fetch article content.", "isSuccess": False}), 200
 
 @app.route('/')
 def index():
